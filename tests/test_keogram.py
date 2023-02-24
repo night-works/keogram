@@ -56,6 +56,10 @@ def test_source_directory_not_exist():
 @patch("keogram.keogram.process_images")
 @patch("keogram.keogram.makedirs")
 def test_output_directories_created(mock_makedir, mock_process):
-    create(ROOT_DIR, f"{ROOT_DIR}/output")
-    mock_makedir.assert_called_with(f"{ROOT_DIR}/output")
+    create(ROOT_DIR, f"{ROOT_DIR}/created")
+    mock_makedir.assert_called_with(f"{ROOT_DIR}/created")
     mock_process.assert_called()
+
+
+def test_create_keogram():
+    create(f"{ROOT_DIR}/test_image", f"{ROOT_DIR}/output")
