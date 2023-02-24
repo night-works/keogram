@@ -66,12 +66,10 @@ def process_images(source: Union[str, PathLike], destination: Union[str, PathLik
 
     sorted_files = sorted(listdir(source))
     logger.debug(f"source directory contains {len(sorted_files)} files")
-    invalid_files = 0
 
     for file_item in sorted_files:
         if not valid_image(file_item):
             logger.warning(f"{file_item} is not a valid image type")
-            invalid_files += 1
             continue
         current_image = Image.open(path.join(source, file_item))
         image_middle = int(current_image.width / 2)
