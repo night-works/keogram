@@ -1,5 +1,27 @@
+#  MIT License
+#
+#  Copyright (c) 2023 Night Works
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
+#
+
 import logging
-import time
 from os import PathLike, path, makedirs, listdir
 from typing import Union
 
@@ -11,26 +33,35 @@ valid_images = [".jpg", ".gif", ".png", ".jpeg"]
 
 
 def create(source: Union[str, PathLike], destination: Union[str, PathLike], keogram_file: str = "keogram.jpg") -> None:
+    """
+    Creates a Keogram from all the image files found in the source directory and saves the resulting image in
+    destination/keogram_file.
+
+    Args:
+        source: location of the images to be processed
+        destination: destination directory to save the resulting keogram
+        keogram_file: file name for the resulting image defaults to keogram.jpg
+
+    Raises:
+        NotADirectoryError: if the source is a file or the directory can not be found
+    """
     if path.exists(source):
-        logger.debug(f"{source} exists on the file system")
+        logger.debug('%s exists on the file system', source)
         if path.isfile(source):
-            message = f"{source} is not a directory"
-            logger.error(message)
-            raise NotADirectoryError(message)
+            logger.error('%s is not a directory', source)
+            raise NotADirectoryError('%s is not a directory', source)
         else:
             if not path.exists(destination):
-                logger.debug(f"{source} doesn't exists with create path.")
+                logger.debug('%s does not exist, creating directories', destination)
                 makedirs(destination)
-            logger.debug("source and destination directories exist beginning to process images")
+            logger.debug('source and destination directories exist beginning to process images')
             process_images(source, destination, keogram_file)
     else:
-        message = f"{source} doesn't exist"
-        logger.error(message)
-        raise NotADirectoryError(message)
+        logger.error('%s does not exist', source)
+        raise NotADirectoryError('%s does not exist', source)
 
 
 def process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
-    start = time.perf_counter()
     keogram_image = Image.new("RGB", (0, 0))
 
     sorted_files = sorted(listdir(source))
@@ -50,13 +81,6 @@ def process_images(source: Union[str, PathLike], destination: Union[str, PathLik
 
     file_destination = f"{destination}/{file_name}"
     keogram_image.save(file_destination)
-    end = time.perf_counter()
-    logger.debug(f"completed\t: {file_destination}")
-    logger.debug(f"time\t\t: {end - start:0.4f} seconds")
-    logger.debug(f"size\t\t: {keogram_image.width} x {keogram_image.height}")
-    logger.debug(f"total files\t: {len(sorted_files)}")
-    logger.debug(f"non images\t: {invalid_files}")
-    logger.debug(f"images\t\t: {len(sorted_files) - invalid_files}")
 
 
 def valid_image(file: Union[str, PathLike]) -> bool:
