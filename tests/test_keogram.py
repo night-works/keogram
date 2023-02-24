@@ -1,4 +1,5 @@
-import os
+import shutil
+from os import path
 from unittest.mock import patch
 
 import pytest
@@ -6,7 +7,7 @@ from PIL import Image
 
 from keogram.keogram import valid_image, concat_images, create
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = path.dirname(path.abspath(__file__))
 
 
 @pytest.mark.parametrize("valid_format", ["jpg", "gif", "png", "jpeg", "JPG", "GIF", "PNG", "JPEG"])
@@ -62,4 +63,9 @@ def test_output_directories_created(mock_makedir, mock_process):
 
 
 def test_create_keogram():
-    create(f"{ROOT_DIR}/test_image", f"{ROOT_DIR}/output")
+    output_folder = f"{ROOT_DIR}/output"
+    shutil.rmtree(output_folder, ignore_errors=True)
+    file_name = "test_image.jpg"
+    assert not path.exists(f"{output_folder}/{file_name}")
+    create(f"{ROOT_DIR}/test_image", output_folder, file_name)
+    assert path.exists(f"{output_folder}/{file_name}")
