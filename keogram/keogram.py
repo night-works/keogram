@@ -1,4 +1,3 @@
-import argparse
 import logging
 import time
 from os import PathLike, path, makedirs, listdir
@@ -74,27 +73,3 @@ def concat_images(im1, im2):
     dst.paste(im2, (im1.width, 0))
     logger.debug(f"new image size {dst.width} x {dst.height}")
     return dst
-
-
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--source', type=str, required=True)
-    parser.add_argument('--destination', type=str, required=True)
-    parser.add_argument('--loglevel', type=int, default=20)
-    args = parser.parse_args()
-
-    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
-    for logger in loggers:
-        logger.setLevel("INFO")
-
-    logger = logging.getLogger(__name__)
-    logging.basicConfig(level=args.loglevel)
-    logger.setLevel(args.loglevel)
-
-    try:
-        logger.debug(f"--source : {args.source}")
-        logger.debug(f"--destination :{args.destination}")
-        create(args.source, args.destination)
-    except OSError as e:
-        logger.fatal(e)
