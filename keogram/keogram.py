@@ -55,13 +55,13 @@ def create(source: Union[str, PathLike], destination: Union[str, PathLike], keog
                 logger.debug('%s does not exist, creating directories', destination)
                 makedirs(destination)
             logger.debug('source and destination directories exist beginning to process images')
-            process_images(source, destination, keogram_file)
+            _process_images(source, destination, keogram_file)
     else:
         logger.error('%s does not exist', source)
         raise NotADirectoryError('%s does not exist', source)
 
 
-def process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
+def _process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
     keogram_image = Image.new("RGB", (0, 0))
 
     sorted_files = sorted(listdir(source))

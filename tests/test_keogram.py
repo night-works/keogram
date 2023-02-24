@@ -77,7 +77,7 @@ def test_source_directory_not_exist():
         create(f"{ROOT_DIR}/not_found/", "")
 
 
-@patch("keogram.keogram.process_images")
+@patch("keogram.keogram._process_images")
 @patch("keogram.keogram.makedirs")
 def test_output_directories_created(mock_makedir, mock_process):
     create(ROOT_DIR, f"{ROOT_DIR}/created")
