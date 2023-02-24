@@ -31,7 +31,7 @@ def create(source: Union[str, PathLike], destination: Union[str, PathLike], keog
 
 def process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
     start = time.perf_counter()
-    keogram = Image.new("RGB", (0, 0))
+    keogram_image = Image.new("RGB", (0, 0))
 
     sorted_files = sorted(listdir(source))
     logger.debug(f"source directory contains {len(sorted_files)} files")
@@ -42,34 +42,34 @@ def process_images(source: Union[str, PathLike], destination: Union[str, PathLik
             logger.warning(f"{file_item} is not a valid image type")
             invalid_files += 1
             continue
-        image_open = Image.open(path.join(source, file_item))
-        image_middle = int(image_open.width / 2)
-        crop_rectangle = (image_middle, 0, image_middle + 1, image_open.height)
-        image_open = image_open.crop(crop_rectangle)
-        keogram = concat_images(keogram, image_open)
+        current_image = Image.open(path.join(source, file_item))
+        image_middle = int(current_image.width / 2)
+        center_slice = (image_middle, 0, image_middle + 1, current_image.height)
+        current_image = current_image.crop(center_slice)
+        keogram_image = concat_images(keogram_image, current_image)
 
     file_destination = f"{destination}/{file_name}"
-    keogram.save(file_destination)
+    keogram_image.save(file_destination)
     end = time.perf_counter()
     logger.debug(f"completed\t: {file_destination}")
     logger.debug(f"time\t\t: {end - start:0.4f} seconds")
-    logger.debug(f"size\t\t: {keogram.width} x {keogram.height}")
+    logger.debug(f"size\t\t: {keogram_image.width} x {keogram_image.height}")
     logger.debug(f"total files\t: {len(sorted_files)}")
     logger.debug(f"non images\t: {invalid_files}")
     logger.debug(f"images\t\t: {len(sorted_files) - invalid_files}")
 
 
 def valid_image(file: Union[str, PathLike]) -> bool:
-    ext = path.splitext(file)[1]
-    logger.debug(f"checking image type of {file} with extension of {ext}")
-    return ext.lower() in valid_images
+    file_extension = path.splitext(file)[1]
+    logger.debug(f"checking image type of {file} with extension of {file_extension}")
+    return file_extension.lower() in valid_images
 
 
 def concat_images(left_image: Image, right_image: Image) -> Image:
     logger.debug("concatenating base image with new image slice")
     logger.debug(f"base image size {left_image.width} x {left_image.height}")
-    dst = Image.new('RGB', (left_image.width + right_image.width, right_image.height))
-    dst.paste(left_image, (0, 0))
-    dst.paste(right_image, (left_image.width, 0))
-    logger.debug(f"new image size {dst.width} x {dst.height}")
-    return dst
+    new_image = Image.new('RGB', (left_image.width + right_image.width, right_image.height))
+    new_image.paste(left_image, (0, 0))
+    new_image.paste(right_image, (left_image.width, 0))
+    logger.debug(f"new image size {new_image.width} x {new_image.height}")
+    return new_image
