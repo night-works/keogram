@@ -1,8 +1,10 @@
 import pytest
 from PIL import Image
+import os
+from keogram.keogram import valid_image, concat_images, create
 
-from keogram.keogram import valid_image, concat_images
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 @pytest.mark.parametrize("valid_format", ["jpg", "gif", "png", "jpeg", "JPG", "GIF", "PNG", "JPEG"])
 def test_valid_image_formats(valid_format):
@@ -36,3 +38,13 @@ def test_concat_first_image_taller():
     result = concat_images(first, second)
     assert result.width == 25
     assert result.height == 30
+
+
+def test_source_not_file():
+    with pytest.raises(NotADirectoryError):
+        create(f"{ROOT_DIR}/test_keogram.py", "")
+
+
+def test_source_directory_not_exist():
+    with pytest.raises(NotADirectoryError):
+        create(f"{ROOT_DIR}/not_found/", "")

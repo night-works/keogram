@@ -13,14 +13,14 @@ valid_images = [".jpg", ".gif", ".png", ".jpeg"]
 def create(source: Union[str, PathLike], destination: Union[str, PathLike], keogram_file: str = "keogram.jpg") -> None:
     if path.exists(source):
         logger.debug(f"{source} exists on the file system")
-        if not path.exists(destination):
-            logger.debug(f"{source} doesn't exists with create path.")
-            makedirs(destination)
         if path.isfile(source):
             message = f"{source} is not a directory"
             logger.error(message)
             raise NotADirectoryError(message)
         else:
+            if not path.exists(destination):
+                logger.debug(f"{source} doesn't exists with create path.")
+                makedirs(destination)
             logger.debug("source and destination directories exist beginning to process images")
             process_images(source, destination, keogram_file)
     else:
