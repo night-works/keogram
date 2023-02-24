@@ -1,10 +1,13 @@
+import os
+from unittest.mock import patch
+
 import pytest
 from PIL import Image
-import os
+
 from keogram.keogram import valid_image, concat_images, create
 
-
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 @pytest.mark.parametrize("valid_format", ["jpg", "gif", "png", "jpeg", "JPG", "GIF", "PNG", "JPEG"])
 def test_valid_image_formats(valid_format):
@@ -48,3 +51,11 @@ def test_source_not_file():
 def test_source_directory_not_exist():
     with pytest.raises(NotADirectoryError):
         create(f"{ROOT_DIR}/not_found/", "")
+
+
+@patch("keogram.keogram.process_images")
+@patch("keogram.keogram.makedirs")
+def test_output_directories_created(mock_makedir, mock_process):
+    create(ROOT_DIR, f"{ROOT_DIR}/output")
+    mock_makedir.assert_called_with(f"{ROOT_DIR}/output")
+    mock_process.assert_called()
