@@ -29,7 +29,7 @@ def create(source: Union[str, PathLike], destination: Union[str, PathLike], keog
         raise NotADirectoryError(message)
 
 
-def process_images(source, destination, file_name):
+def process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
     start = time.perf_counter()
     keogram = Image.new("RGB", (0, 0))
 
@@ -59,17 +59,17 @@ def process_images(source, destination, file_name):
     logger.debug(f"images\t\t: {len(sorted_files) - invalid_files}")
 
 
-def valid_image(file_item) -> bool:
-    ext = path.splitext(file_item)[1]
-    logger.debug(f"checking image type of {file_item} with extension of {ext}")
+def valid_image(file: Union[str, PathLike]) -> bool:
+    ext = path.splitext(file)[1]
+    logger.debug(f"checking image type of {file} with extension of {ext}")
     return ext.lower() in valid_images
 
 
-def concat_images(im1, im2):
+def concat_images(left_image: Image, right_image: Image) -> Image:
     logger.debug("concatenating base image with new image slice")
-    logger.debug(f"base image size {im1.width} x {im1.height}")
-    dst = Image.new('RGB', (im1.width + im2.width, im2.height))
-    dst.paste(im1, (0, 0))
-    dst.paste(im2, (im1.width, 0))
+    logger.debug(f"base image size {left_image.width} x {left_image.height}")
+    dst = Image.new('RGB', (left_image.width + right_image.width, right_image.height))
+    dst.paste(left_image, (0, 0))
+    dst.paste(right_image, (left_image.width, 0))
     logger.debug(f"new image size {dst.width} x {dst.height}")
     return dst
