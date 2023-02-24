@@ -41,7 +41,8 @@ def get_concat_h_cut(im1, im2):
     return dst
 
 
-in_directory = "/home/joseph/Repos/night-works/night-sky-pi/data/observations/2023-02-10/stills/"
-out_directory = "/home/joseph/Repos/night-works/night-sky-pi/data/observations/2023-02-10/keogram/"
+if __name__ == '__main__':
+    in_directory = "/home/joseph/Repos/night-works/night-sky-pi/data/observations/2023-02-10/stills/"
+    out_directory = "/home/joseph/Repos/night-works/night-sky-pi/data/observations/2023-02-10/keogram/"
 
-create(in_directory, out_directory)
+    create(in_directory, out_directory)
