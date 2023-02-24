@@ -4,7 +4,7 @@ import argparse
 
 from PIL import Image
 
-valid_images = [".jpg", ".gif", ".png", ".tga"]
+valid_images = [".jpg", ".gif", ".png", ".jpeg"]
 
 
 def create(source: Union[str, PathLike], destination: Union[str, PathLike], keogram_file: str = "keogram.jpg") -> None:
