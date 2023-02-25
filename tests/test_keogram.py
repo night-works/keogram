@@ -28,7 +28,7 @@ from unittest.mock import patch
 import pytest
 from PIL import Image
 
-from keogram.keogram import valid_image, concat_images, create
+from src.keogram.keogram import valid_image, concat_images, create
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -77,8 +77,8 @@ def test_source_directory_not_exist():
         create(f"{ROOT_DIR}/not_found/", "")
 
 
-@patch("keogram.keogram._process_images")
-@patch("keogram.keogram.os.makedirs")
+@patch("src.keogram.keogram._process_images")
+@patch("src.keogram.keogram.os.makedirs")
 def test_output_directories_created(mock_makedir, mock_process):
     create(ROOT_DIR, f"{ROOT_DIR}/created")
     mock_makedir.assert_called_with(f"{ROOT_DIR}/created")
