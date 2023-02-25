@@ -45,7 +45,7 @@ class MetaData:
 
 
 def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike],
-           keogram_file: str = "keogram.jpg", metadata: bool = False) -> None:
+           keogram_file: str = "keogram.jpg", metadata: bool = False) -> MetaData:
     """
     Creates a Keogram from all the image files found in the source directory and saves the resulting image in
     destination/keogram_file. Checks the existence of the source directory and creates the destination directory if
@@ -56,6 +56,9 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
         destination: destination directory to save the resulting keogram
         keogram_file: file name for the resulting image defaults to keogram.jpg
         metadata: generates a json file of metadata of data used to create keogram
+
+    Returns:
+        the metadata for the created keogram with information for further processing
 
     Raises:
         NotADirectoryError: if the source is a file or the directory can not be found
@@ -70,7 +73,7 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
                 logger.debug('%s does not exist, creating directories', destination)
                 os.makedirs(destination)
             logger.debug('source and destination directories exist beginning to process images')
-            _process_images(source, destination, keogram_file, metadata)
+            return _process_images(source, destination, keogram_file, metadata)
     else:
         logger.error('%s does not exist', source)
         raise NotADirectoryError('%s does not exist', source)
