@@ -38,6 +38,10 @@ class MetaData:
     destination: str
     file_name: str
     final_path: str
+    height: int
+    width: int
+    valid_image: int
+    invalid_files: [str]
 
 
 def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike],
@@ -89,6 +93,7 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
         source: The directory that contains the images to be processed into a keogram
         destination: The output directory to save the completed keogram image
         file_name: The filename to be used for the resulting keogram image
+        metadata: Save the keogram metadata alongside the resulting image as json
 
     Returns:
         the metadata for the created keogram with information for further processing
@@ -98,9 +103,12 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
     sorted_files = sorted(os.listdir(source))
     logger.debug(f"source directory contains {len(sorted_files)} files")
 
+    invalid = []
+
     for file_item in sorted_files:
         if not valid_image(file_item):
             logger.warning(f"{file_item} is not a valid image type")
+            invalid.append(file_item)
             continue
         current_image = Image.open(os.path.join(source, file_item))
         image_middle = int(current_image.width / 2)
@@ -112,7 +120,9 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
     keogram_image.save(file_destination)
 
     keogram_image_metadata = MetaData(source=source, destination=destination, file_name=file_name,
-                                      final_path=file_destination)
+                                      final_path=file_destination, width=keogram_image.width,
+                                      height=keogram_image.height,
+                                      invalid_files=invalid, valid_image=len(sorted_files) - len(invalid))
     if metadata:
         _save_metadata(keogram_image_metadata)
 
