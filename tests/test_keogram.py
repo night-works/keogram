@@ -90,5 +90,5 @@ def test_create_keogram():
     shutil.rmtree(output_folder, ignore_errors=True)
     file_name = "test_image.jpg"
     assert not os.path.exists(f"{output_folder}/{file_name}")
-    create(f"{ROOT_DIR}/test_image", output_folder, file_name)
+    create(f"{ROOT_DIR}/test_image", output_folder, file_name, True)
     assert os.path.exists(f"{output_folder}/{file_name}")

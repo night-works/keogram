@@ -20,9 +20,11 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 #
-
+import dataclasses
+import json
 import logging
 import os
+from dataclasses import dataclass
 from typing import Union
 
 from PIL import Image
@@ -30,8 +32,16 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class MetaData:
+    source: str
+    destination: str
+    file_name: str
+    final_path: str
+
+
 def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike],
-           keogram_file: str = "keogram.jpg") -> None:
+           keogram_file: str = "keogram.jpg", metadata: bool = False) -> None:
     """
     Creates a Keogram from all the image files found in the source directory and saves the resulting image in
     destination/keogram_file. Checks the existence of the source directory and creates the destination directory if
@@ -41,6 +51,7 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
         source: location of the images to be processed
         destination: destination directory to save the resulting keogram
         keogram_file: file name for the resulting image defaults to keogram.jpg
+        metadata: generates a json file of metadata of data used to create keogram
 
     Raises:
         NotADirectoryError: if the source is a file or the directory can not be found
@@ -55,13 +66,21 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
                 logger.debug('%s does not exist, creating directories', destination)
                 os.makedirs(destination)
             logger.debug('source and destination directories exist beginning to process images')
-            _process_images(source, destination, keogram_file)
+            _process_images(source, destination, keogram_file, metadata)
     else:
         logger.error('%s does not exist', source)
         raise NotADirectoryError('%s does not exist', source)
 
 
-def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.PathLike], file_name: str) -> None:
+def _save_metadata(metadata: MetaData):
+    json_file_name = os.path.splitext(metadata.file_name)[0]
+    json_data = json.dumps(dataclasses.asdict(metadata), indent=4)
+    with open(f"{metadata.destination}/{json_file_name}.json", "w") as outfile:
+        outfile.write(json_data)
+
+
+def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.PathLike], file_name: str,
+                    metadata: bool = False) -> MetaData:
     """
     Creates a Keogram from all the image files found in the source directory and saves the resulting image in
     destination/keogram_file. No checks are performed on the source and destination directories.
@@ -70,6 +89,9 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
         source: The directory that contains the images to be processed into a keogram
         destination: The output directory to save the completed keogram image
         file_name: The filename to be used for the resulting keogram image
+
+    Returns:
+        the metadata for the created keogram with information for further processing
     """
     keogram_image = Image.new("RGB", (0, 0))
 
@@ -88,6 +110,13 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
 
     file_destination = f"{destination}/{file_name}"
     keogram_image.save(file_destination)
+
+    keogram_image_metadata = MetaData(source=source, destination=destination, file_name=file_name,
+                                      final_path=file_destination)
+    if metadata:
+        _save_metadata(keogram_image_metadata)
+
+    return keogram_image_metadata
 
 
 def valid_image(file: Union[str, os.PathLike]) -> bool:
