@@ -22,20 +22,20 @@
 #
 
 import logging
-from os import PathLike, path, makedirs, listdir
+import os
 from typing import Union
 
 from PIL import Image
 
 logger = logging.getLogger(__name__)
 
-valid_images = [".jpg", ".gif", ".png", ".jpeg"]
 
-
-def create(source: Union[str, PathLike], destination: Union[str, PathLike], keogram_file: str = "keogram.jpg") -> None:
+def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike],
+           keogram_file: str = "keogram.jpg") -> None:
     """
     Creates a Keogram from all the image files found in the source directory and saves the resulting image in
-    destination/keogram_file.
+    destination/keogram_file. Checks the existence of the source directory and creates the destination directory if
+    it already doesn't exist.
 
     Args:
         source: location of the images to be processed
@@ -45,15 +45,15 @@ def create(source: Union[str, PathLike], destination: Union[str, PathLike], keog
     Raises:
         NotADirectoryError: if the source is a file or the directory can not be found
     """
-    if path.exists(source):
+    if os.path.exists(source):
         logger.debug('%s exists on the file system', source)
-        if path.isfile(source):
+        if os.path.isfile(source):
             logger.error('%s is not a directory', source)
             raise NotADirectoryError('%s is not a directory', source)
         else:
-            if not path.exists(destination):
+            if not os.path.exists(destination):
                 logger.debug('%s does not exist, creating directories', destination)
-                makedirs(destination)
+                os.makedirs(destination)
             logger.debug('source and destination directories exist beginning to process images')
             _process_images(source, destination, keogram_file)
     else:
@@ -61,17 +61,26 @@ def create(source: Union[str, PathLike], destination: Union[str, PathLike], keog
         raise NotADirectoryError('%s does not exist', source)
 
 
-def _process_images(source: Union[str, PathLike], destination: Union[str, PathLike], file_name: str) -> None:
+def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.PathLike], file_name: str) -> None:
+    """
+    Creates a Keogram from all the image files found in the source directory and saves the resulting image in
+    destination/keogram_file. No checks are performed on the source and destination directories.
+
+    Args:
+        source: The directory that contains the images to be processed into a keogram
+        destination: The output directory to save the completed keogram image
+        file_name: The filename to be used for the resulting keogram image
+    """
     keogram_image = Image.new("RGB", (0, 0))
 
-    sorted_files = sorted(listdir(source))
+    sorted_files = sorted(os.listdir(source))
     logger.debug(f"source directory contains {len(sorted_files)} files")
 
     for file_item in sorted_files:
         if not valid_image(file_item):
             logger.warning(f"{file_item} is not a valid image type")
             continue
-        current_image = Image.open(path.join(source, file_item))
+        current_image = Image.open(os.path.join(source, file_item))
         image_middle = int(current_image.width / 2)
         center_slice = (image_middle, 0, image_middle + 1, current_image.height)
         current_image = current_image.crop(center_slice)
@@ -81,13 +90,34 @@ def _process_images(source: Union[str, PathLike], destination: Union[str, PathLi
     keogram_image.save(file_destination)
 
 
-def valid_image(file: Union[str, PathLike]) -> bool:
-    file_extension = path.splitext(file)[1]
+def valid_image(file: Union[str, os.PathLike]) -> bool:
+    """
+    Takes a file and checks to see if it's a supported source file type.
+
+    Args:
+        file: The file to be checked for a correct extension type
+
+    Returns: True if the file is supported otherwise False
+
+    """
+    valid_images = [".jpg", ".gif", ".png", ".jpeg"]
+    file_extension = os.path.splitext(file)[1]
     logger.debug(f"checking image type of {file} with extension of {file_extension}")
     return file_extension.lower() in valid_images
 
 
 def concat_images(left_image: Image, right_image: Image) -> Image:
+    """
+    Takes two images and joins them together, the right image is appended to the left image resulting in a new image
+    this image will always be the height of the second image that's passed.
+
+    Args:
+        left_image: The image to be on the left of the resulting image
+        right_image: The image to be joined to the right of the resulting image
+
+    Returns: The final image of the two being joined together
+
+    """
     logger.debug("concatenating base image with new image slice")
     logger.debug(f"base image size {left_image.width} x {left_image.height}")
     new_image = Image.new('RGB', (left_image.width + right_image.width, right_image.height))
