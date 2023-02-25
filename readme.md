@@ -9,3 +9,12 @@
 </div>
 
 # Keogram
+
+
+## License
+
+Licensed under the MIT.
+Copyright 2023 Night Works. [Copy of the license](LICENCE).
+
+A list of the Licenses of the dependencies of the project can be found at
+the bottom of the [Libraries Summary](https://libraries.io/pypi/keogram).
