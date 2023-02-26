@@ -79,7 +79,12 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
         raise NotADirectoryError('%s does not exist', source)
 
 
-def _save_metadata(metadata: MetaData):
+def _save_metadata(metadata: MetaData) -> None:
+    """
+    Saves the metadata from the creation of the keogram to the file system alongside the keogram
+    Args:
+        metadata: The MetaData object to be converted to json and saved
+    """
     json_file_name = os.path.splitext(metadata.file_name)[0]
     json_data = json.dumps(dataclasses.asdict(metadata), indent=4)
     with open(f"{metadata.destination}/{json_file_name}.json", "w") as outfile:
