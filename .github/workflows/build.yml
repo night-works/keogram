@@ -29,7 +29,7 @@ jobs:
         pip install tox
     - name: Test with pytest
       run: |
-        tox --cov=src/keogram --cov-report xml:coverage.xml
+        tox
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
