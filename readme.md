@@ -72,7 +72,7 @@ Please first raise an issue then fork the repository referencing the issue in co
 ## License
 
 Licensed under the MIT.
-Copyright 2023 Night Works. [Copy of the license](LICENCE.md).
+Copyright 2023 Night Works. [Copy of the license](LICENSE.md).
 
 A list of the Licenses of the dependencies of the project can be found at
 the bottom of the [Libraries Summary](https://libraries.io/pypi/keogram).
