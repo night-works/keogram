@@ -54,7 +54,8 @@ def create(source: Union[str, os.PathLike], destination: Union[str, os.PathLike]
     Args:
         source: location of the images to be processed
         destination: destination directory to save the resulting keogram
-        keogram_file: file name for the resulting image defaults to keogram.jpg
+        keogram_file: file name for the resulting image defaults to keogram.jpg if setting a custom name be sure to
+                      include the file type extension
         metadata: generates a json file of metadata of data used to create keogram
 
     Returns:
@@ -100,7 +101,7 @@ def _process_images(source: Union[str, os.PathLike], destination: Union[str, os.
     Args:
         source: The directory that contains the images to be processed into a keogram
         destination: The output directory to save the completed keogram image
-        file_name: The filename to be used for the resulting keogram image
+        file_name: The filename to be used for the resulting keogram image including the file extension
         metadata: Save the keogram metadata alongside the resulting image as json
 
     Returns:

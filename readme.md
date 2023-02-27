@@ -39,7 +39,7 @@ pip install keogram
 To generate a keogram with checks on the source directory, and creation of the destination directory call the following.
 The first parameter is the folder that contains the images that you want to use for the keogram, the second parameter
 is the destination folder for the keogram. The third parameter (optional) is the filename of the resulting keogram
-image.
+image. Be sure to include the file type extension. The default is "keogram.jpg"
 The final parameter is weather to save a metadata json file alongside the generated keogram, this is optional and
 defaults to
 **False**. The method returns the MetaData of the file, even if not asked to save it locally.
